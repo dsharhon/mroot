@@ -1,7 +1,7 @@
 {
   "name": "mroot",
-  "version": "1.0.0",
-  "description": "Minimalist Merkle Root calculator",
+  "version": "2.0.0",
+  "description": "Minimalist Merkle root calculator",
   "main": "mroot",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
