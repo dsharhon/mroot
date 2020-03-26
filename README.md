@@ -2,7 +2,7 @@ mroot
 =====
 Simple Merkle root calculator
 
-Node
+Node or bundler
 
 `require('mroot')`
 
@@ -18,7 +18,7 @@ Usage
 
 `mroot(leaves, hasher, compat = false)`
 
-`leaves` your ordered array or set of **pre-hashed** messages
+`leaves` your ordered Array or Set of **already-hashed** messages
 
 `hasher` your pair-hashing function, e.g. `(a, b) => sha256(a + b)`
 
@@ -26,7 +26,36 @@ Usage
 last leaf, if necessary, for compatibility with Satoshi's Merkle tree
 implementation in Bitcoin
 
-**Notes on Merkle tree security**
+Notes
+
+1. Your leaves can be in whatever format you want (hex, buffer, array). They
+never get touched except by your hasher.
+
+2. If you have zero leaves, we throw an error. In Bitcoin, this returns the
+256-bit representation of 1 (see [merkle.cpp](
+https://github.com/bitcoin/bitcoin/blob/master/src/consensus/merkle.cpp)). You
+need to handle this case.
+
+3. If you only have one leaf, your hasher won't be called, so the root will be
+your leaf itself, even with the Bitcoin compatibility option. You need to make
+sure your leaf's type is acceptable as a root.
+
+4. This "constant-space" algorithm mutates a shrinking internal array that
+doesn't keep the whole tree in memory. (Other JS implementations optimize this
+further by requiring you to concatenate all of your leaves into a mutable buffer
+to avoid garbage collection of intermediate nodes?)
+
+Examples
+
+    // Node
+    const crypto = require('crypto')
+    const sha256 = buf => crypto.createHash('sha256').update(buf).digest()
+    const hasher = (a, b) => sha256(Buffer.concat([a, b]))
+    const leaves = ['bwib', 'bwab', bwob'].map(Buffer.from).map(sha256)
+    const root = mroot(leaves, hasher)
+    console.log(root.toString('hex'))
+
+**Warnings on Merkle tree security**
 
 
 1.  Each leaf must be externally validated, to protect against the second
@@ -64,5 +93,6 @@ implementation in Bitcoin
     `[A, B, C]` as well.
 
     https://bitcointalk.org/?topic=102395
+    https://github.com/bitcoin/bitcoin/blob/master/src/consensus/merkle.cpp
 
 By Dylan Sharhon, 2020

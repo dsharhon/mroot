@@ -1,10 +1,10 @@
 {
   "name": "mroot",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Simple Merkle root calculator",
   "main": "mroot",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
