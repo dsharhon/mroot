@@ -23,7 +23,8 @@ function mroot (leaves, hasher, compat = false) {
     const oddity = nodes[nodes.length - 1]
     if (compat && nodes.length % 2) nodes.push(oddity)
 
-    const pairs = nodes.length / 2
+    const half = nodes.length / 2
+    const pairs = Math.trunc(half)
     for (let i = 0; i < pairs; i++) {
       const nodeA = nodes[2 * i    ]
       const nodeB = nodes[2 * i + 1]
@@ -32,8 +33,8 @@ function mroot (leaves, hasher, compat = false) {
     }
 
     // Trim the array and, if present, promote the odd man out
-    nodes.length = Math.trunc(pairs)
-    if (pairs % 1) nodes.push(oddity)
+    nodes.length = pairs
+    if (!compat && half % 1) nodes.push(oddity)
   }
 
   return nodes[0] // root, last remaining node
